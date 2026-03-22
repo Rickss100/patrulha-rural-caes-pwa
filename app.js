@@ -129,7 +129,7 @@ function resize() {
   const hdr    = document.getElementById('header');
   canvas.width  = window.innerWidth;
   canvas.height = window.innerHeight - hdr.offsetHeight;
-  sc = canvas.width / VWIDTH;
+  // A escala (sc) não é mais forçada aqui para manter o zoom do usuário
 }
 
 // ── Cenários (mesma ordem de objetos sempre) ──────────────────
@@ -399,19 +399,47 @@ function onUp() {
 canvas.addEventListener('mousedown', e => { e.preventDefault(); onDown(e.clientX, e.clientY - document.getElementById('header').offsetHeight); });
 canvas.addEventListener('mousemove', e => { onMove(e.clientX, e.clientY - document.getElementById('header').offsetHeight); });
 canvas.addEventListener('mouseup',   ()  => onUp());
+canvas.addEventListener('wheel', e => {
+  e.preventDefault();
+  const zoomFactor = 1.1;
+  if (e.deltaY < 0) sc *= zoomFactor;
+  else sc /= zoomFactor;
+  sc = Math.max(0.1, Math.min(sc, 3.0));
+}, { passive: false });
 
 // Touch
+let initPinchDist = null;
+let initSc = sc;
+
 canvas.addEventListener('touchstart', e => {
   e.preventDefault();
-  const t = e.touches[0];
-  onDown(t.clientX, t.clientY - document.getElementById('header').offsetHeight);
+  if (e.touches.length === 2) {
+    panning = false; dragging = false; selObj = null;
+    initPinchDist = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY);
+    initSc = sc;
+  } else if (e.touches.length === 1) {
+    const t = e.touches[0];
+    onDown(t.clientX, t.clientY - document.getElementById('header').offsetHeight);
+  }
 }, { passive: false });
+
 canvas.addEventListener('touchmove', e => {
   e.preventDefault();
-  const t = e.touches[0];
-  onMove(t.clientX, t.clientY - document.getElementById('header').offsetHeight);
+  if (e.touches.length === 2 && initPinchDist) {
+    const dist = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY);
+    sc = initSc * (dist / initPinchDist);
+    sc = Math.max(0.1, Math.min(sc, 3.0));
+  } else if (e.touches.length === 1 && !initPinchDist) {
+    const t = e.touches[0];
+    onMove(t.clientX, t.clientY - document.getElementById('header').offsetHeight);
+  }
 }, { passive: false });
-canvas.addEventListener('touchend', e => { e.preventDefault(); onUp(); }, { passive: false });
+
+canvas.addEventListener('touchend', e => {
+  e.preventDefault();
+  if (e.touches.length < 2) initPinchDist = null;
+  onUp();
+}, { passive: false });
 
 // ── UI helpers ────────────────────────────────────────────────
 function updateGroupBtns() {
@@ -433,7 +461,7 @@ function init() {
   document.querySelectorAll('.scene-btn').forEach(btn => {
     btn.addEventListener('click', () => {
       startTransition(SCENES[btn.dataset.scenario]);
-      setTimeout(focusScene, 50);
+      // Não chama focusScene() para travar a perspectiva (zoom/posição) escolhida pelo usuário
     });
   });
 
