@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="theme-color" content="#040c08">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Patrulha Rural">
+  <meta name="description" content="Simulador tático de patrulha rural com cães — PMES / Canil">
+  <link rel="manifest" href="manifest.json">
+  <link rel="stylesheet" href="styles.css">
+  <title>Patrulha Rural com Cães · PMES</title>
+</head>
+<body>
+  <header id="header">
+    <div id="title-bar">
+      <span class="dog-icon">🐕‍🦺</span>
+      <div id="title-text">
+        <span id="app-title">PATRULHA RURAL COM CÃES</span>
+        <span id="app-sub">PMES · SIMULAÇÃO TÁTICA</span>
+      </div>
+      <span id="selected-label" class="selected-label"></span>
+    </div>
+
+    <div id="scenario-bar">
+      <button class="scene-btn" data-scenario="EMBARCADO" id="s-embarcado">EMBARCADO</button>
+      <button class="scene-btn" data-scenario="COLUNA"    id="s-coluna">COLUNA</button>
+      <button class="scene-btn" data-scenario="EMB. FRENTE"    id="s-frente">↑ FRENTE</button>
+      <button class="scene-btn" data-scenario="EMB. ESQUERDA"  id="s-esquerda">← ESQ.</button>
+      <button class="scene-btn" data-scenario="EMB. DIREITA"   id="s-direita">→ DIR.</button>
+      <button class="scene-btn" data-scenario="EMB. RETAGUARDA" id="s-retaguarda">↓ RET.</button>
+    </div>
+
+    <div id="action-bar">
+      <button class="group-btn" id="btn-comando">COMANDO</button>
+      <button class="group-btn" id="btn-apoio">APOIO</button>
+      <span class="divider"></span>
+      <button class="act-btn"   id="btn-rotate">↻ ROT.</button>
+      <button class="act-btn"   id="btn-center">⊕ VER</button>
+    </div>
+  </header>
+
+  <canvas id="canvas"></canvas>
+
+  <script src="app.js"></script>
+  <script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('./sw.js');
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,26 @@
+{
+  "name": "Patrulha Rural com Cães · PMES",
+  "short_name": "Patrulha Rural",
+  "description": "Simulador tático de patrulha rural com cães — PMES / Canil",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "orientation": "landscape",
+  "background_color": "#040c08",
+  "theme_color": "#00e676",
+  "lang": "pt-BR",
+  "icons": [
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["utilities", "productivity"]
+}

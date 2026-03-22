@@ -1,0 +1,154 @@
+@import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@400;700;900&display=swap');
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg:       #040c08;
+  --bg2:      #081510;
+  --green:    #00e676;
+  --green2:   #00c853;
+  --green-dim:#1a4a28;
+  --red:      #ff1744;
+  --border:   #1a3a1f;
+  --text:     #b0ffcc;
+  --text-dim: #4a7a5a;
+  --btn-h:    38px;
+}
+
+html, body {
+  width: 100%; height: 100%;
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Share Tech Mono', monospace;
+  overflow: hidden;
+  touch-action: none;
+}
+
+/* ── HEADER ─────────────────────────────────────────── */
+#header {
+  background: linear-gradient(180deg, #060f0a 0%, #040c08 100%);
+  border-bottom: 1px solid var(--border);
+  box-shadow: 0 2px 12px rgba(0,230,118,.15);
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+/* Title row */
+#title-bar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 10px 4px;
+  border-bottom: 1px solid var(--border);
+}
+.dog-icon { font-size: 22px; }
+#title-text { display: flex; flex-direction: column; }
+#app-title {
+  font-family: 'Orbitron', monospace;
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: 2px;
+  color: var(--green);
+  text-shadow: 0 0 10px rgba(0,230,118,.6);
+}
+#app-sub {
+  font-size: 9px;
+  color: var(--text-dim);
+  letter-spacing: 1px;
+}
+.selected-label {
+  margin-left: auto;
+  font-size: 11px;
+  color: var(--green);
+  background: rgba(0,230,118,.1);
+  border: 1px solid var(--green-dim);
+  border-radius: 4px;
+  padding: 2px 8px;
+  min-width: 60px;
+  text-align: center;
+}
+
+/* Scenario bar */
+#scenario-bar {
+  display: flex;
+  overflow-x: auto;
+  overflow-y: hidden;
+  gap: 4px;
+  padding: 5px 8px;
+  border-bottom: 1px solid var(--border);
+  scrollbar-width: none;
+}
+#scenario-bar::-webkit-scrollbar { display: none; }
+
+.scene-btn {
+  flex-shrink: 0;
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 1px;
+  color: var(--text-dim);
+  background: transparent;
+  border: 1px solid var(--green-dim);
+  border-radius: 4px;
+  padding: 4px 10px;
+  cursor: pointer;
+  transition: all .15s;
+  white-space: nowrap;
+}
+.scene-btn:hover  { color: var(--green); border-color: var(--green); background: rgba(0,230,118,.08); }
+.scene-btn.active { color: #000; background: var(--green); border-color: var(--green); box-shadow: 0 0 8px rgba(0,230,118,.5); }
+
+/* Action bar */
+#action-bar {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 8px;
+}
+.group-btn {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 1px;
+  color: var(--text-dim);
+  background: transparent;
+  border: 1px solid var(--green-dim);
+  border-radius: 4px;
+  padding: 4px 12px;
+  cursor: pointer;
+  transition: all .15s;
+  height: var(--btn-h);
+}
+.group-btn:hover { color: var(--green); border-color: var(--green); }
+.group-btn.active {
+  color: #000;
+  background: var(--green2);
+  border-color: var(--green2);
+  box-shadow: 0 0 8px rgba(0,200,83,.5);
+  font-weight: bold;
+}
+.divider {
+  width: 1px; height: 24px;
+  background: var(--border);
+  margin: 0 4px;
+}
+.act-btn {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 10px;
+  color: var(--text-dim);
+  background: transparent;
+  border: 1px solid var(--green-dim);
+  border-radius: 4px;
+  padding: 4px 10px;
+  cursor: pointer;
+  transition: all .15s;
+  height: var(--btn-h);
+}
+.act-btn:hover { color: var(--green); border-color: var(--green); background: rgba(0,230,118,.06); }
+.act-btn:active { background: rgba(0,230,118,.2); }
+
+/* ── CANVAS ─────────────────────────────────────────── */
+#canvas {
+  display: block;
+  cursor: grab;
+  touch-action: none;
+}
+#canvas:active { cursor: grabbing; }
