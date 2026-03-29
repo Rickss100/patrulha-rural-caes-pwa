@@ -1,4 +1,4 @@
-const CACHE = 'prc-v1';
+const CACHE = 'prc-v2';
 const FILES = ['./', './index.html', './styles.css', './app.js', './manifest.json',
                './icon-192.png', './icon-512.png'];
 

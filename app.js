@@ -107,7 +107,10 @@ let objs   = [];      // array de Pentagon (ordem fixa)
 let selObj = null;    // objeto selecionado
 let grp    = null;    // 'COMANDO'|'APOIO'|null
 let panX   = 0, panY = 0;
-let sc     = 0.35;
+let sc     = 0.35;          // será recalculado no focusScene inicial
+const SC_MIN = 0.08;
+const SC_MAX = 3.0;
+const ZOOM_STEP = 1.15;     // fator por clique nos botões ＋/－
 let ptr    = null;    // última posição do ponteiro (world coords)
 let dragging = false;
 let panning  = false;
@@ -297,13 +300,23 @@ function tickTransition() {
 }
 
 // ── Foco automático no cenário ────────────────────────────────
-function focusScene() {
-  // Calcula bounding box dos objetos verdes
-  const g = objs.filter(o => o.color === C.GREEN);
-  if (!g.length) return;
-  const xs = g.map(o => o.vx), ys = g.map(o => o.vy);
-  const cx = (Math.min(...xs) + Math.max(...xs)) / 2;
-  const cy = (Math.min(...ys) + Math.max(...ys)) / 2;
+function focusScene(fitZoom = false) {
+  // Calcula bounding box de TODOS os objetos
+  const allObjs = objs.filter(o => o.color === C.GREEN || o.color === C.BLUE);
+  if (!allObjs.length) return;
+  const pad  = 80; // pixels de margem
+  const xs = allObjs.flatMap(o => o.pts().map(p => p.x));
+  const ys = allObjs.flatMap(o => o.pts().map(p => p.y));
+  const minX = Math.min(...xs), maxX = Math.max(...xs);
+  const minY = Math.min(...ys), maxY = Math.max(...ys);
+  const cx = (minX + maxX) / 2;
+  const cy = (minY + maxY) / 2;
+  if (fitZoom) {
+    // Ajusta o zoom para que toda a cena caiba na tela
+    const scW = (canvas.width  - pad * 2) / (maxX - minX || 1);
+    const scH = (canvas.height - pad * 2) / (maxY - minY || 1);
+    sc = Math.max(SC_MIN, Math.min(Math.min(scW, scH), SC_MAX));
+  }
   panX = canvas.width  / 2 - cx * sc;
   panY = canvas.height / 2 - cy * sc;
 }
@@ -401,10 +414,8 @@ canvas.addEventListener('mousemove', e => { onMove(e.clientX, e.clientY - docume
 canvas.addEventListener('mouseup',   ()  => onUp());
 canvas.addEventListener('wheel', e => {
   e.preventDefault();
-  const zoomFactor = 1.1;
-  if (e.deltaY < 0) sc *= zoomFactor;
-  else sc /= zoomFactor;
-  sc = Math.max(0.1, Math.min(sc, 3.0));
+  const factor = e.deltaY < 0 ? ZOOM_STEP : 1 / ZOOM_STEP;
+  sc = Math.max(SC_MIN, Math.min(sc * factor, SC_MAX));
 }, { passive: false });
 
 // Touch
@@ -428,7 +439,7 @@ canvas.addEventListener('touchmove', e => {
   if (e.touches.length === 2 && initPinchDist) {
     const dist = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY);
     sc = initSc * (dist / initPinchDist);
-    sc = Math.max(0.1, Math.min(sc, 3.0));
+    sc = Math.max(SC_MIN, Math.min(sc, SC_MAX));
   } else if (e.touches.length === 1 && !initPinchDist) {
     const t = e.touches[0];
     onMove(t.clientX, t.clientY - document.getElementById('header').offsetHeight);
@@ -480,17 +491,25 @@ function init() {
     if (selObj) selObj.rotate(Math.PI / 4);
   });
 
-  // Centralizar
-  document.getElementById('btn-center').addEventListener('click', focusScene);
+  // Zoom ＋/－
+  document.getElementById('btn-zoom-in').addEventListener('click', () => {
+    sc = Math.min(sc * ZOOM_STEP, SC_MAX);
+  });
+  document.getElementById('btn-zoom-out').addEventListener('click', () => {
+    sc = Math.max(sc / ZOOM_STEP, SC_MIN);
+  });
+
+  // Centralizar (com refit de zoom)
+  document.getElementById('btn-center').addEventListener('click', () => focusScene(true));
 
   // Previne scroll padrão na tela inteira
   document.body.addEventListener('touchmove', e => e.preventDefault(), { passive: false });
 
-  // Cenário inicial
+  // Cenário inicial — zoom ajustado à tela
   setupEmbarcado();
   activeSetupFn = setupEmbarcado;
   updateSceneBtns();
-  setTimeout(focusScene, 100);
+  setTimeout(() => focusScene(true), 150);
 
   render();
 }
