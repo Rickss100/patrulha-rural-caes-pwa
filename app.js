@@ -486,10 +486,59 @@ function init() {
     updateGroupBtns();
   });
 
-  // Rotacionar
+  // Rotacionar objeto selecionado
   document.getElementById('btn-rotate').addEventListener('click', () => {
     if (selObj) selObj.rotate(Math.PI / 4);
   });
+
+  // ── Rotação de tela (Screen Orientation API) ──────────────────
+  const btnSR = document.getElementById('btn-screen-rotate');
+
+  function updateScreenRotateBtn() {
+    const isLandscape = screen.orientation
+      ? screen.orientation.type.startsWith('landscape')
+      : window.innerWidth > window.innerHeight;
+    btnSR.classList.toggle('active', isLandscape);
+    btnSR.title = isLandscape ? 'Voltar ao Retrato' : 'Girar para Paisagem';
+  }
+
+  function lockOrientation(type) {
+    if (screen.orientation && screen.orientation.lock) {
+      screen.orientation.lock(type).catch(() => {});
+    } else if (screen.lockOrientation) {
+      screen.lockOrientation(type);
+    } else if (screen.mozLockOrientation) {
+      screen.mozLockOrientation(type);
+    } else if (screen.msLockOrientation) {
+      screen.msLockOrientation(type);
+    }
+  }
+
+  btnSR.addEventListener('click', () => {
+    const isLandscape = screen.orientation
+      ? screen.orientation.type.startsWith('landscape')
+      : window.innerWidth > window.innerHeight;
+    lockOrientation(isLandscape ? 'portrait' : 'landscape');
+    // Atualiza estado do botão após curto delay para a orientação mudar
+    setTimeout(updateScreenRotateBtn, 200);
+  });
+
+  if (screen.orientation) {
+    screen.orientation.addEventListener('change', () => {
+      updateScreenRotateBtn();
+      resize();
+    });
+  } else {
+    window.addEventListener('orientationchange', () => {
+      updateScreenRotateBtn();
+      resize();
+    });
+  }
+
+  updateScreenRotateBtn();
+
+  // Tenta bloquear em retrato ao iniciar
+  lockOrientation('portrait');
 
   // Zoom ＋/－
   document.getElementById('btn-zoom-in').addEventListener('click', () => {

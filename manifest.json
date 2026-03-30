@@ -4,7 +4,7 @@
   "description": "Simulador tático de patrulha rural com cães — PMES / Canil",
   "start_url": "./index.html",
   "display": "standalone",
-  "orientation": "landscape",
+  "orientation": "portrait",
   "background_color": "#040c08",
   "theme_color": "#00e676",
   "lang": "pt-BR",
