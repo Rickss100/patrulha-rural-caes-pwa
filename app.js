@@ -537,8 +537,7 @@ function init() {
 
   updateScreenRotateBtn();
 
-  // Tenta bloquear em retrato ao iniciar
-  lockOrientation('portrait');
+  // Remoção do bloqueio forçado em retrato para permitir que o app rotacione livremente
 
   // Zoom ＋/－
   document.getElementById('btn-zoom-in').addEventListener('click', () => {
